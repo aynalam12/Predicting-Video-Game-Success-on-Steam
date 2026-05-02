@@ -1,10 +1,3 @@
--- =====================================================================
--- Analytical SQL queries used in the report.
--- Each query answers a specific research question.
--- =====================================================================
-
--- Q1: Class balance — what fraction of games are "successful"?
--- ---------------------------------------------------------------------
 SELECT
     is_successful,
     COUNT(*) AS n_games,
@@ -13,8 +6,7 @@ FROM games
 GROUP BY is_successful;
 
 
--- Q2: Top 10 genres by success rate (joins games <-> game_genre <-> genres)
--- ---------------------------------------------------------------------
+
 SELECT
     g.genre_name,
     COUNT(*) AS total_games,
@@ -29,8 +21,7 @@ ORDER BY success_rate_pct DESC
 LIMIT 10;
 
 
--- Q3: Success rate by release month (seasonal effect?)
--- ---------------------------------------------------------------------
+
 SELECT
     release_month,
     COUNT(*) AS n_games,
@@ -40,8 +31,7 @@ GROUP BY release_month
 ORDER BY release_month;
 
 
--- Q4: Success rate by price bucket
--- ---------------------------------------------------------------------
+
 SELECT
     CASE
         WHEN price = 0          THEN '0_free'
@@ -58,8 +48,7 @@ GROUP BY price_bucket
 ORDER BY price_bucket;
 
 
--- Q5: Top 10 developers by number of successful games
--- ---------------------------------------------------------------------
+
 SELECT
     d.developer_name,
     COUNT(*)                       AS games_released,
@@ -73,8 +62,7 @@ ORDER BY successful_games DESC, avg_rating_ratio DESC
 LIMIT 10;
 
 
--- Q6: Most common tag combinations in successful games
--- ---------------------------------------------------------------------
+
 SELECT
     t.tag_name,
     COUNT(*)                                          AS appearances,
