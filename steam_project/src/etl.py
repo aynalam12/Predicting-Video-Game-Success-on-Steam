@@ -22,17 +22,10 @@ DATA_PATH   = ROOT / 'data' / 'steam.csv'
 DB_PATH     = ROOT / 'db'   / 'steam.db'
 SCHEMA_PATH = ROOT / 'db'   / 'schema.sql'
 
-# Target-variable thresholds. Justified in the report:
-#   - 80% positive matches Steam's own "Very Positive" badge cutoff
-#   - 50,000 owners excludes hobby releases without filtering out all
-#     successful indies (Steam Spy's third-lowest bucket)
+
 SUCCESS_RATING_THRESHOLD = 0.80
 SUCCESS_OWNERS_THRESHOLD = 50_000
 
-
-# ---------------------------------------------------------------------
-# EXTRACT
-# ---------------------------------------------------------------------
 def extract(csv_path: Path) -> pd.DataFrame:
     print(f'[EXTRACT] reading {csv_path.name}')
     df = pd.read_csv(csv_path)
@@ -40,9 +33,6 @@ def extract(csv_path: Path) -> pd.DataFrame:
     return df
 
 
-# ---------------------------------------------------------------------
-# TRANSFORM
-# ---------------------------------------------------------------------
 def parse_owner_range(s):
     """'50000-100000' -> (50000, 100000). Returns (NaN, NaN) on bad input."""
     if not isinstance(s, str) or '-' not in s:
@@ -58,23 +48,19 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
     print('[TRANSFORM] cleaning + feature engineering')
     before = len(df)
 
-    # Drop rows missing fields we cannot impute
     df = df.dropna(subset=['genres', 'price', 'release_date',
                            'positive_ratings', 'owners']).copy()
     print(f'            dropped {before - len(df):,} rows with critical nulls')
 
-    # Parse owner range -> two integer columns
     parsed = df['owners'].apply(parse_owner_range)
     df['owners_min'] = parsed.apply(lambda x: x[0])
     df['owners_max'] = parsed.apply(lambda x: x[1])
 
-    # Temporal features
     df['release_date']  = pd.to_datetime(df['release_date'], errors='coerce')
     df = df.dropna(subset=['release_date'])
     df['release_year']  = df['release_date'].dt.year
     df['release_month'] = df['release_date'].dt.month
 
-    # Rating ratio + target variable
     total = df['positive_ratings'] + df['negative_ratings']
     df['rating_ratio'] = (df['positive_ratings'] / total).fillna(0)
     df['is_successful'] = (
@@ -87,10 +73,6 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
           f'({100*pos/len(df):.1f}%)')
     return df
 
-
-# ---------------------------------------------------------------------
-# LOAD
-# ---------------------------------------------------------------------
 def _build_lookup(conn, table, name_col, values):
     """Insert unique values, return {name: id} mapping."""
     unique = sorted({v for v in values if isinstance(v, str) and v.strip()})
@@ -111,7 +93,6 @@ def load(df: pd.DataFrame, db_path: Path, schema_path: Path) -> None:
     conn = sqlite3.connect(db_path)
     conn.executescript(schema_path.read_text())
 
-    # 1. populate reference tables
     dev_map = _build_lookup(conn, 'developers', 'developer_name', df['developer'])
     pub_map = _build_lookup(conn, 'publishers', 'publisher_name', df['publisher'])
 
@@ -121,7 +102,6 @@ def load(df: pd.DataFrame, db_path: Path, schema_path: Path) -> None:
     genre_map = _build_lookup(conn, 'genres', 'genre_name', all_genres)
     tag_map   = _build_lookup(conn, 'tags',   'tag_name',   all_tags)
 
-    # 2. core games table
     games_rows = []
     for _, r in df.iterrows():
         games_rows.append((
@@ -141,7 +121,6 @@ def load(df: pd.DataFrame, db_path: Path, schema_path: Path) -> None:
         (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     """, games_rows)
 
-    # 3. junction tables
     gg_rows, gt_rows = [], []
     for _, r in df.iterrows():
         appid = int(r['appid'])
@@ -156,7 +135,6 @@ def load(df: pd.DataFrame, db_path: Path, schema_path: Path) -> None:
 
     conn.commit()
 
-    # quick sanity check
     for tbl in ['games', 'developers', 'publishers', 'genres', 'tags',
                 'game_genre', 'game_tag']:
         n = conn.execute(f'SELECT COUNT(*) FROM {tbl}').fetchone()[0]
