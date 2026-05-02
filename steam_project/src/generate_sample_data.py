@@ -12,9 +12,8 @@ import pandas as pd
 from pathlib import Path
 
 np.random.seed(42)
-N = 27000  # roughly the real dataset size
+N = 27000  
 
-# Realistic genre/category vocabularies pulled from Steam
 GENRES = ['Action', 'Adventure', 'Casual', 'Indie', 'Massively Multiplayer',
           'Racing', 'RPG', 'Simulation', 'Sports', 'Strategy', 'Free to Play',
           'Early Access']
@@ -29,13 +28,11 @@ def random_multilabel(pool, k_min=1, k_max=4):
     k = np.random.randint(k_min, k_max + 1)
     return ';'.join(np.random.choice(pool, size=k, replace=False))
 
-# Owner buckets exactly as Steam Spy reports them in the Kaggle dataset
 OWNER_BUCKETS = [
     '0-20000', '20000-50000', '50000-100000', '100000-200000',
     '200000-500000', '500000-1000000', '1000000-2000000',
     '2000000-5000000', '5000000-10000000', '10000000-20000000',
 ]
-# Most games sit in the lowest buckets (heavy tail)
 OWNER_PROBS = [0.55, 0.18, 0.10, 0.06, 0.04, 0.03, 0.02, 0.013, 0.005, 0.002]
 
 release_dates = pd.to_datetime(
@@ -48,15 +45,10 @@ prices = np.random.choice(
     N, p=[0.10, 0.05, 0.20, 0.25, 0.15, 0.12, 0.07, 0.04, 0.02]
 )
 
-# Generate genres up front so we can inject genre-driven signal
 genre_strings = [random_multilabel(GENRES, 1, 3) for _ in range(N)]
 tag_strings   = [random_multilabel(TAGS,   1, 3) for _ in range(N)]
 
-# Per-game success "score" driven by realistic factors:
-#   * RPG, Strategy, Indie boost; Casual hurts
-#   * October/November release (Q4 holiday window) boosts
-#   * Mid-tier pricing ($10-20) boosts more than free or premium
-#   * Some genuine noise so the model doesn't get a perfect score
+
 GENRE_EFFECT = {'RPG': 1.4, 'Strategy': 1.1, 'Indie': 0.6, 'Action': 0.4,
                 'Adventure': 0.5, 'Simulation': 0.3, 'Casual': -0.8,
                 'Free to Play': -0.5, 'Sports': -0.3, 'Racing': -0.2,
@@ -76,7 +68,7 @@ def price_effect(p):
 
 scores = np.zeros(N)
 for i in range(N):
-    s = np.random.normal(-1.2, 0.7)         # baseline (most games fail)
+    s = np.random.normal(-1.2, 0.7)         
     for g in genre_strings[i].split(';'):
         s += GENRE_EFFECT.get(g, 0)
     for t in tag_strings[i].split(';'):
@@ -85,21 +77,19 @@ for i in range(N):
     s += price_effect(prices[i])
     scores[i] = s
 
-# Convert score -> owner bucket index (higher score -> bigger bucket)
-prob_success = 1 / (1 + np.exp(-scores))   # logistic squash
+prob_success = 1 / (1 + np.exp(-scores))   
 bucket_idx = np.clip(
     (prob_success * len(OWNER_BUCKETS)).astype(int)
-    + np.random.randint(-1, 2, N),         # small jitter
+    + np.random.randint(-1, 2, N),         
     0, len(OWNER_BUCKETS) - 1
 )
 owners = np.array([OWNER_BUCKETS[i] for i in bucket_idx])
 
-# Reviews scale with owners, ratio influenced by score
 positive_ratings = np.zeros(N, dtype=int)
 negative_ratings = np.zeros(N, dtype=int)
 for i, b_idx in enumerate(bucket_idx):
     base = max(5, int(50 * (b_idx + 1) ** 1.6))
-    pos_rate = 0.55 + 0.35 * (1 / (1 + np.exp(-scores[i])))   # 0.55..0.90
+    pos_rate = 0.55 + 0.35 * (1 / (1 + np.exp(-scores[i])))   
     pos_rate = np.clip(pos_rate + np.random.normal(0, 0.05), 0.2, 0.98)
     total = max(1, int(np.random.poisson(base) * np.random.uniform(0.7, 1.3)))
     positive_ratings[i] = int(total * pos_rate)
@@ -132,7 +122,6 @@ df = pd.DataFrame({
     'price': prices,
 })
 
-# Inject a small amount of missing data so cleaning is meaningful
 mask = np.random.rand(N) < 0.01
 df.loc[mask, 'genres'] = np.nan
 mask = np.random.rand(N) < 0.005
