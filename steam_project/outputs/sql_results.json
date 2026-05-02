@@ -1,0 +1,247 @@
+{
+  "class_balance": [
+    {
+      "is_successful": 0,
+      "n_games": 21930,
+      "pct": 82.41
+    },
+    {
+      "is_successful": 1,
+      "n_games": 4680,
+      "pct": 17.59
+    }
+  ],
+  "top_genres": [
+    {
+      "genre_name": "RPG",
+      "total_games": 4513,
+      "successful_games": 1998,
+      "success_rate_pct": 44.27
+    },
+    {
+      "genre_name": "Strategy",
+      "total_games": 4444,
+      "successful_games": 1610,
+      "success_rate_pct": 36.23
+    },
+    {
+      "genre_name": "Indie",
+      "total_games": 4394,
+      "successful_games": 1079,
+      "success_rate_pct": 24.56
+    },
+    {
+      "genre_name": "Adventure",
+      "total_games": 4440,
+      "successful_games": 984,
+      "success_rate_pct": 22.16
+    },
+    {
+      "genre_name": "Action",
+      "total_games": 4314,
+      "successful_games": 930,
+      "success_rate_pct": 21.56
+    },
+    {
+      "genre_name": "Simulation",
+      "total_games": 4451,
+      "successful_games": 856,
+      "success_rate_pct": 19.23
+    },
+    {
+      "genre_name": "Massively Multiplayer",
+      "total_games": 4398,
+      "successful_games": 804,
+      "success_rate_pct": 18.28
+    },
+    {
+      "genre_name": "Racing",
+      "total_games": 4471,
+      "successful_games": 501,
+      "success_rate_pct": 11.21
+    },
+    {
+      "genre_name": "Sports",
+      "total_games": 4530,
+      "successful_games": 470,
+      "success_rate_pct": 10.38
+    },
+    {
+      "genre_name": "Early Access",
+      "total_games": 4342,
+      "successful_games": 435,
+      "success_rate_pct": 10.02
+    }
+  ],
+  "success_by_month": [
+    {
+      "release_month": 1,
+      "n_games": 2225,
+      "success_rate_pct": 12.58
+    },
+    {
+      "release_month": 2,
+      "n_games": 2016,
+      "success_rate_pct": 12.25
+    },
+    {
+      "release_month": 3,
+      "n_games": 2265,
+      "success_rate_pct": 15.45
+    },
+    {
+      "release_month": 4,
+      "n_games": 2176,
+      "success_rate_pct": 16.96
+    },
+    {
+      "release_month": 5,
+      "n_games": 2191,
+      "success_rate_pct": 16.7
+    },
+    {
+      "release_month": 6,
+      "n_games": 2255,
+      "success_rate_pct": 14.37
+    },
+    {
+      "release_month": 7,
+      "n_games": 2283,
+      "success_rate_pct": 13.45
+    },
+    {
+      "release_month": 8,
+      "n_games": 2335,
+      "success_rate_pct": 13.92
+    },
+    {
+      "release_month": 9,
+      "n_games": 2211,
+      "success_rate_pct": 22.3
+    },
+    {
+      "release_month": 10,
+      "n_games": 2219,
+      "success_rate_pct": 27.58
+    },
+    {
+      "release_month": 11,
+      "n_games": 2127,
+      "success_rate_pct": 26.99
+    },
+    {
+      "release_month": 12,
+      "n_games": 2307,
+      "success_rate_pct": 18.77
+    }
+  ],
+  "success_by_price": [
+    {
+      "price_bucket": "$10-20",
+      "n_games": 7200,
+      "success_rate_pct": 21.58
+    },
+    {
+      "price_bucket": "$20-40",
+      "n_games": 2922,
+      "success_rate_pct": 17.21
+    },
+    {
+      "price_bucket": "$40+",
+      "n_games": 558,
+      "success_rate_pct": 11.47
+    },
+    {
+      "price_bucket": "$5-10",
+      "n_games": 6636,
+      "success_rate_pct": 21.5
+    },
+    {
+      "price_bucket": "<$5",
+      "n_games": 6665,
+      "success_rate_pct": 12.84
+    },
+    {
+      "price_bucket": "Free",
+      "n_games": 2629,
+      "success_rate_pct": 10.5
+    }
+  ],
+  "top_tags": [
+    {
+      "tag_name": "Story Rich",
+      "appearances": 2437,
+      "success_rate_pct": 29.01
+    },
+    {
+      "tag_name": "Atmospheric",
+      "appearances": 2555,
+      "success_rate_pct": 27.87
+    },
+    {
+      "tag_name": "Open World",
+      "appearances": 2535,
+      "success_rate_pct": 26.23
+    },
+    {
+      "tag_name": "Roguelike",
+      "appearances": 2540,
+      "success_rate_pct": 21.97
+    },
+    {
+      "tag_name": "Co-op",
+      "appearances": 2458,
+      "success_rate_pct": 20.55
+    },
+    {
+      "tag_name": "Difficult",
+      "appearances": 2459,
+      "success_rate_pct": 19.97
+    },
+    {
+      "tag_name": "Pixel Graphics",
+      "appearances": 2535,
+      "success_rate_pct": 17.91
+    },
+    {
+      "tag_name": "Sci-fi",
+      "appearances": 2503,
+      "success_rate_pct": 17.02
+    },
+    {
+      "tag_name": "Survival",
+      "appearances": 2586,
+      "success_rate_pct": 16.98
+    },
+    {
+      "tag_name": "First-Person",
+      "appearances": 2516,
+      "success_rate_pct": 16.97
+    },
+    {
+      "tag_name": "Sandbox",
+      "appearances": 2555,
+      "success_rate_pct": 16.83
+    },
+    {
+      "tag_name": "Fantasy",
+      "appearances": 2538,
+      "success_rate_pct": 16.75
+    },
+    {
+      "tag_name": "Singleplayer",
+      "appearances": 2541,
+      "success_rate_pct": 16.53
+    },
+    {
+      "tag_name": "Puzzle",
+      "appearances": 2507,
+      "success_rate_pct": 16.07
+    },
+    {
+      "tag_name": "Anime",
+      "appearances": 2503,
+      "success_rate_pct": 16.02
+    }
+  ]
+}
