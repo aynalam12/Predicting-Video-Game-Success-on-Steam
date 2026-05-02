@@ -36,9 +36,6 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 RANDOM_STATE = 42
 
 
-# ---------------------------------------------------------------------
-# 1. Build the feature matrix from the database
-# ---------------------------------------------------------------------
 def load_features(db_path: Path):
     """
     Pulls per-game numeric features + one-hot encoded genres from SQLite.
@@ -53,7 +50,6 @@ def load_features(db_path: Path):
         FROM games
     """, conn)
 
-    # Pivot game_genre into one-hot columns via SQL + pandas
     genre_long = pd.read_sql_query("""
         SELECT gg.appid, g.genre_name
         FROM   game_genre gg
@@ -88,15 +84,11 @@ def load_features(db_path: Path):
     return X, y
 
 
-# ---------------------------------------------------------------------
-# 2. Train both models, return a dict of per-model results
-# ---------------------------------------------------------------------
 def train_and_evaluate(X, y):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.25, random_state=RANDOM_STATE, stratify=y
     )
 
-    # Logistic Regression needs scaling for fair comparison
     scaler = StandardScaler()
     X_train_s = scaler.fit_transform(X_train)
     X_test_s  = scaler.transform(X_test)
@@ -124,7 +116,6 @@ def train_and_evaluate(X, y):
         y_pred  = model.predict(X_te)
         y_proba = model.predict_proba(X_te)[:, 1]
 
-        # Cross-validated F1 on the training set
         cv_scores = cross_val_score(model, X_tr, y_train,
                                     cv=cv, scoring='f1', n_jobs=-1)
 
@@ -148,9 +139,6 @@ def train_and_evaluate(X, y):
     return results, X_train.columns, y_test
 
 
-# ---------------------------------------------------------------------
-# 3. Visualizations
-# ---------------------------------------------------------------------
 def plot_class_distribution(y, out):
     counts = y.value_counts().sort_index()
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -256,9 +244,6 @@ def plot_success_by_price(db_path, out):
     plt.tight_layout(); plt.savefig(out, dpi=150); plt.close()
 
 
-# ---------------------------------------------------------------------
-# 4. Driver
-# ---------------------------------------------------------------------
 def main():
     X, y = load_features(DB_PATH)
 
@@ -274,7 +259,6 @@ def main():
     plot_feature_importance(results['Random Forest']['model'], feature_names,
                             OUT_DIR / 'fig_feature_importance.png')
 
-    # Persist a metrics summary that the report can reference
     summary = {
         name: {
             'cv_f1_mean':   r['cv_f1_mean'],
